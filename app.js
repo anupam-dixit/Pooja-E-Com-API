@@ -4,6 +4,8 @@ const path = require('node:path')
 const AutoLoad = require('@fastify/autoload')
 const {db} = require("./helpers/db");
 const {pitLib} = require("./helpers/pitLib");
+const {Token} = require("./models/TokenModel");
+const {User} = require("./models/UserModel");
 
 // Pass --options via CLI arguments in command to enable these options.
 const options = {}
@@ -61,7 +63,12 @@ module.exports = async function (fastify, opts) {
   });
   fastify.decorate("authenticate", async function(request, reply) {
     try {
-      await request.jwtVerify()
+      let decodedToken=await request.jwtVerify()
+      if (decodedToken) {
+        let token=await Token.findOne({token:request.headers.authorization.replaceAll('Bearer ','')})
+        if (!token||!token.active) {reply.send(pitLib.sendResponse(false,'Invalid Token please login'))}
+        request.headers.user_data=decodedToken
+      }
     } catch (err) {
       reply.send(err)
     }

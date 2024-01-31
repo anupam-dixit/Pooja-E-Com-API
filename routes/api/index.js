@@ -15,14 +15,14 @@ module.exports = async function (fastify, opts) {
   })
 
   fastify.post('/user/login',{preHandler:UserMiddleware.login}, UserController.login)
-  fastify.post('/user/create',{preHandler:[/*fastify.authenticate,*/ UserMiddleware.create]}, UserController.create)
+  fastify.post('/user/create',{preHandler:[UserMiddleware.create]}, UserController.create)
 
   fastify.post('/role/create',{preHandler:AccessMiddleware.createRole}, AccessController.createRole)
   fastify.post('/role/list',{preHandler:[AccessMiddleware.listRole,UtilsMiddleware.pagination]}, AccessController.listRole)
   fastify.post('/role/edit/:_id',{preHandler:[AccessMiddleware.editRole]}, AccessController.editRole)
   fastify.get('/role/dtlist',{preHandler:AccessMiddleware.dtlistRole}, AccessController.dtlistRole)
 
-  fastify.post('/category/create',{preHandler:CategoryMiddleware.create}, CategoryController.create)
+  fastify.post('/category/create',{preHandler:[fastify.authenticate,CategoryMiddleware.create]}, CategoryController.create)
   fastify.post('/category/list',{preHandler:[CategoryMiddleware.list,UtilsMiddleware.pagination]}, CategoryController.list)
   fastify.post('/category/edit/:_id',{preHandler:[CategoryMiddleware.edit]}, CategoryController.edit)
   fastify.get('/category/dtlist', CategoryController.dtlist)
