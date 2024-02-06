@@ -6,6 +6,11 @@ const CategorySchema  = new mongoose.Schema({
         required: true,
         unique: true
     },
+    slug:{
+        type:String,
+        required: true,
+        unique: true
+    }
 },{
     timestamps: {
         createdAt: 'created_at',

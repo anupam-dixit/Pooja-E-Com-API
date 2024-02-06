@@ -12,7 +12,8 @@ exports.CategoryMiddleware = {
         })
         validation=jSchema.validate(request.body)
         if (!validation.error){
-            r=await await Category.findOne({title:request.body.title})
+            request.body.slug=pitLib.util.trimToCode(request.body.title,'-').toLowerCase()
+            r=await Category.findOne({slug: request.body.title})
             if (r){
                 validation.error={message:'Already in Database'}
             }
@@ -40,6 +41,11 @@ exports.CategoryMiddleware = {
         r=await Category.findOne({_id:request.params._id})
         if (!r){
             reply.send(pitLib.sendResponse(null,'Incorrect Id'))
+        }
+        request.body.slug=pitLib.util.trimToCode(request.body.title,'-').toLowerCase()
+        r=await Category.find({slug: request.body.slug}).countDocuments()
+        if (r>1){
+            validation.error={message:'Already in Database'}
         }
         request.params._id=new mongoose.Types.ObjectId(request.params._id)
     },

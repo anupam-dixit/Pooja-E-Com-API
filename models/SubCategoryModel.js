@@ -11,6 +11,11 @@ const SubCategorySchema  = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Category'
     },
+    slug:{
+        type:String,
+        required: true,
+        unique: true
+    }
 },{
     timestamps: {
         createdAt: 'created_at',

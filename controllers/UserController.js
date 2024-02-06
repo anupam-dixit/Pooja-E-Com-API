@@ -1,10 +1,9 @@
 const {pitLib} = require("../helpers/pitLib");
 const {User} = require("../models/UserModel");
-const {genSalt, hash} = require("bcrypt");
 const {Token} = require("../models/TokenModel");
 exports.UserController = {
     login :async (request, reply) => {
-        let u = await User.findOne({phone: request.body.phone}).select('+password').lean().exec();
+        let u = await User.findOne({phone: request.body.phone}).select('+password').populate('role','code').lean().exec();
         let isCorrect = await pitLib.util.checkHash(request.body.password, u.password)
         if (isCorrect){
             u.token= request.server.jwt.sign(u)

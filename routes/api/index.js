@@ -8,6 +8,12 @@ const {SubCategoryMiddleware} = require("../../middlewares/SubCategoryMiddleware
 const {CategoryController} = require("../../controllers/CategoryController");
 const {CategoryMiddleware} = require("../../middlewares/CategoryMiddleware");
 const {SubCategoryController} = require("../../controllers/SubCategoryController");
+const {ProductMiddleware} = require("../../middlewares/ProductMiddleware");
+const {ProductController} = require("../../controllers/ProductController");
+const {UnitMiddleware} = require("../../middlewares/UnitMiddleware");
+const {UnitController} = require("../../controllers/UnitController");
+const {CartMiddleware} = require("../../middlewares/CartMiddleware");
+const {CartController} = require("../../controllers/CartController");
 
 module.exports = async function (fastify, opts) {
   fastify.get('/uploads', function (req, reply) {
@@ -31,4 +37,16 @@ module.exports = async function (fastify, opts) {
   fastify.post('/sub-category/list',{preHandler:[SubCategoryMiddleware.list,UtilsMiddleware.pagination]}, SubCategoryController.list)
   fastify.post('/sub-category/edit/:_id',{preHandler:[SubCategoryMiddleware.edit]}, SubCategoryController.edit)
   fastify.get('/sub-category/dtlist', SubCategoryController.dtlist)
+
+  fastify.post('/product/create',{preHandler:[fastify.authenticate,ProductMiddleware.create]}, ProductController.create)
+  fastify.post('/product/edit/:_id',{preHandler:[fastify.authenticate,ProductMiddleware.edit]}, ProductController.edit)
+  fastify.post('/product/list',{preHandler:[ProductMiddleware.list,UtilsMiddleware.pagination]}, ProductController.list)
+  fastify.get('/product/dtlist', ProductController.dtlist)
+
+  fastify.post('/unit/create',{preHandler:[fastify.authenticate,UnitMiddleware.create]}, UnitController.create)
+  fastify.post('/unit/list',{preHandler:[UnitMiddleware.list,UtilsMiddleware.pagination]}, UnitController.list)
+  fastify.post('/unit/edit/:_id',{preHandler:[fastify.authenticate,UnitMiddleware.edit]}, UnitController.edit)
+  fastify.get('/unit/dtlist', UnitController.dtlist)
+
+  fastify.post('/cart/create',{preHandler:[fastify.authenticate,CartMiddleware.create]}, CartController.create)
 }

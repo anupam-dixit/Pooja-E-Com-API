@@ -10,7 +10,6 @@ const {User} = require("./models/UserModel");
 // Pass --options via CLI arguments in command to enable these options.
 const options = {}
 async function onFile(part) {
-  console.log("================================")
   const buff = await part.toBuffer()
   part.value = {file:Buffer.from(buff, 'binary'),name:part['filename']} // set `part.value` to specify the request body value
 }

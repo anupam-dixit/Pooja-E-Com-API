@@ -2,7 +2,12 @@ const {genSalt, hash, compare} = require("bcrypt");
 const fastifyJwt = require("@fastify/jwt");
 const {Media} = require("../models/MediaModel");
 const fs = require('node:fs/promises');
+const {isValidObjectId} = require("mongoose");
+const mongoose = require("mongoose");
 exports. pitLib = {
+    oid:function (_id) {
+        return new mongoose.Types.ObjectId(_id);
+    },
     sendResponse:function (status=null,message=null,data=null) {
         if (!status){
             status =false;
@@ -25,7 +30,8 @@ exports. pitLib = {
             if (!replacer){
                 replacer = '_'
             }
-            return string.replaceAll(/[&\/\\#, +()$~%.'":*?<>{}]/g,replacer)
+            return string.replace(/[^\w ]+/g, "")
+                .replace(/ +/g, replacer)
         },
         makeHash:async function (string) {
             const salt = await genSalt(10);
@@ -40,4 +46,25 @@ exports. pitLib = {
             return `${timestamp}_${randomString}`;
         }
     },
+    joi:{
+        oid:function (value, helper) {
+            let r = true
+            if (!isValidObjectId(value)) {
+                r = helper.message(`${helper.state.path[0]} is not valid object ID`)
+            }
+            return r
+        }
+    },
+    product:{
+        pricer:function (product) {
+            let r=null
+            if (product.discount.type==='f'){
+                r=parseFloat(product.mrp)-parseFloat(product.discount.amount)
+            }
+            if (product.discount.type==='p'){
+                r=parseFloat(product.mrp)-(parseFloat(product.mrp)*parseFloat(product.discount.amount)/100)
+            }
+            return r.toFixed(2)
+        }
+    }
 };

@@ -30,8 +30,6 @@ exports.CategoryController = {
     },
     list :async (request, reply) => {
         total=parseInt(await Category.countDocuments())
-        // filtered=await Category.find(request.body).skip((request.query.page-1)*request.query.pagination).limit(request.query.pagination)
-        // request.body._id=new mongoose.Types.ObjectId(request.body._id)
         filtered=await Category.aggregate([
             {
                 $match: request.body,
